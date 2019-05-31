@@ -1,0 +1,12 @@
+<ivy-module version="2.0">
+    <info organisation="com.epam" module="HelloWorld" revision="6.0"/>
+
+
+    <dependencies>
+        <dependency org="junit" name="junit" rev="4.12"/>
+        <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.5.201505241946"/>
+
+<!--        <dependency org="org.apache.commons" name="commons-lang3" rev="3.4"/>-->
+    </dependencies>
+
+</ivy-module>

@@ -1,0 +1,274 @@
+<?xml version="1.0"?>
+<project name="HelloWorld" default="run" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<property name="build" 				value="build"/>
+	<property name="srcRoot" 			value="src/main/java"/>
+	<property name="srcPackage" 		value="com/epam/calculator"/>
+	<property name="testRoot" 			value="src/test/java"/>
+	<property name="testPackage" 		value="com/epam/calculator"/>
+	<property name="artifactPackage" 	value="artifact"/>
+	<property name="jarName" 			value="CalculatorJunit.jar"/>
+	<property name="artifact" 			value="artifact"/>
+
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="lib/org.jacoco.ant-0.7.5.201505241946.jar"/>
+		<classpath path="lib/org.jacoco.agent-0.7.5.201505241946.jar"/>
+		<classpath path="lib/org.jacoco.report-0.7.5.201505241946.jar"/>
+		<classpath path="lib/org.jacoco.core-0.7.5.201505241946.jar"/>
+		<classpath path="lib/asm-debug-all-5.0.1.jar"/>
+	</taskdef>
+
+
+	<path id="dependencies">
+		<fileset dir="lib"/>
+	</path>
+
+	<target name="resolve" description="retreive dependencies with ivy">
+		<ivy:retrieve/>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${build}"/>
+		<javac destdir="${build}" includeantruntime="false" classpathref="dependencies">
+			<src path="${srcRoot}/${srcPackage}"/>
+			<src path="${testRoot}/${testPackage}"/>
+		</javac>
+	</target>
+
+	<target name="junit" depends="compile">
+		<jacoco:coverage destfile="jacoco.exec">
+			<junit printsummary="yes" haltonfailure="yes" showoutput="yes" fork="true">
+				<classpath>
+					<pathelement location="build"/>
+					<pathelement path="lib/junit-4.12.jar"/>
+					<pathelement path="lib/hamcrest-core-1.3.jar"/>
+	<!--				<pathelement location="lib/hamcrest-core-1.3.jar"/>-->
+	<!--				<pathelement location="lib/junit-4.12.jar"/>-->
+				</classpath>
+
+				<test name="com.epam.calculator.CalculatorTest" outfile="Report" />
+				<formatter type="plain"/>
+			</junit>
+		</jacoco:coverage>
+	</target>
+
+	<target name="report">
+		<jacoco:report>
+			<executiondata>
+				<file file="jacoco.exec"/>
+			</executiondata>
+
+			<structure name="Example Project">
+				<classfiles>
+					<fileset dir="build">
+					</fileset>
+				</classfiles>
+			</structure>
+
+			<html destdir="report"/>
+		</jacoco:report>
+	</target>
+
+
+
+
+	<target name="package" depends="junit">
+		<jar destfile="${artifact}/${jarName}" basedir="${build}">
+			<manifest>
+				<attribute name="Class-Path" value="../lib/junit-4.12.jar ../lib/hamcrest-core-1.3.jar"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run">
+		<java jar="${artifact}/${jarName}" fork="true">
+		</java>
+	</target>
+
+
+
+	<target name="publish" description="used to put ready artifact to the local repository">
+		<ivy:publish resolver="myResolverForPublishing" organisation="com.epam" module="HelloWorld" revision="6.0" srcivypattern="ivy.xml">
+			<artifacts pattern="artifact/[module].[ext]"/>
+		</ivy:publish>
+	</target>
+
+	<!-- retrive and publish to Entreprise Repository -->
+	<!--
+	<property name="build" 				value="build"/>
+	<property name="srcRoot" 			value="src/main/java"/>
+	<property name="srcPackage" 		value="com/epam/helloworldforant"/>
+	<property name="excludeClass" 		value="**/runner/SimpleRunner.java"/>
+	<property name="jarName" 			value="HelloWorld.jar"/>
+	<property name="resources" 			value="src/main/resources"/>
+	<property name="mainClass" 			value="com.epam.helloworldforant.runner.Runner"/>
+	<property environment="env"/>
+	<property name="artifact" 			value="artifact"/>
+
+	<path id="dependencies">
+		<fileset dir="lib"/>
+	</path>
+
+	<target name="resolve" description=" retreive dependencies with ivy">
+		<ivy:retrieve/>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${build}"/>
+		<javac destdir="${build}" includeantruntime="false" classpathref="dependencies">
+			<src path="${srcRoot}/${srcPackage}"/>
+			<exclude name="${excludeClass}"/>
+		</javac>
+
+		<copy todir="${build}">
+			<fileset dir="${resources}"/>
+		</copy>
+
+	</target>
+
+	<target name="package">
+		<jar destfile="${artifact}/${jarName}" basedir="${build}">
+			<manifest>
+				<attribute name="Main-Class" value="${mainClass}"/>
+				<attribute name="Class-Path" value="../lib/commons-lang3-3.4.jar"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run">
+		<java jar="${artifact}/${jarName}" fork="true">
+		</java>
+	</target>
+
+
+
+	<target name="publish" description="used to put ready artifact to the local repository">
+		<ivy:publish resolver="myResolverForPublishing" organisation="com.epam" module="HelloWorld" revision="6.0" srcivypattern="ivy.xml">
+			<artifacts pattern="artifact/[module].[ext]"/>
+		</ivy:publish>
+	</target>
+	-->
+
+	<!--  value replacement  -->
+<!--	 <property name="build" 			value="build"/>-->
+<!--	 <property name="srcRoot" 			value="src/main/java"/>-->
+<!--	 <property name="srcPackage" 		value="com/epam/helloworldforant"/>-->
+<!--	 <property name="excludeClass" 		value="**/runner/SimpleRunner.java"/>-->
+<!--	 <property name="jarName" 			value="RunnerSPI.jar"/>-->
+<!--	 <property name="resources" 		value="src/main/resources"/>-->
+<!--	 <property name="environment" 		value="default"/>-->
+<!--	 <property name="propertyFile" 		value="src/main/resources/properties/message.properties"/>-->
+<!--	 <property name="propertyFileEnv" 	value="src/main/resources/properties/message_${environment}.properties"/>-->
+<!--	 <property name="propertyFileDest" 	value="${build}/properties/message.properties"/>-->
+<!--	 <property name="mainClass" 		value="com.epam.helloworldforant.runner.Runner"/>-->
+<!--	 <property name="inputArg" 			value="Aset"/>-->
+<!--	-->
+<!--	 <target name="compile">-->
+<!--         <mkdir dir="${build}"/>-->
+<!--         <javac destdir="${build}" includeantruntime="false">-->
+<!--             <src path="${srcRoot}/${srcPackage}"/>-->
+<!--			 <exclude name="${excludeClass}"/>-->
+<!--         </javac>-->
+<!--&lt;!&ndash;		 <filter token="env" value="dev"/>&ndash;&gt;-->
+<!--&lt;!&ndash;		 <filter token="name" value="AsetK"/>&ndash;&gt;-->
+<!--		 <filter filtersfile="${propertyFileEnv}"/> &lt;!&ndash; Values from another property &ndash;&gt;-->
+<!--		 <copy todir="${build}">-->
+<!--			 <fileset dir="${resources}">-->
+<!--				 <exclude name="**/properties/*.properties"/>-->
+<!--			 </fileset>-->
+<!--		 </copy>-->
+<!--		 <copy file="${propertyFile}" tofile="${propertyFileDest}" overwrite="true" filtering="true"/>-->
+<!--     </target>-->
+<!--	-->
+<!--	 <target name="package">-->
+<!--		 <jar destfile="${build}/${jarName}" basedir="${build}">-->
+<!--			 <manifest>-->
+<!--				 <attribute name="Main-Class" value="${mainClass}"/>-->
+<!--			 </manifest>-->
+<!--		 </jar>-->
+<!--	 </target>-->
+<!--	-->
+<!--     <target name="run">-->
+<!--         <java jar="${build}/${jarName}" fork="true">-->
+<!--			 <arg value="${inputArg}"/>-->
+<!--		 </java>-->
+<!--     </target>-->
+
+
+<!--	 file replacement-->
+	<!--
+	<property name="build" 				value="build"/>
+	<property name="srcRoot" 			value="src/main/java"/>
+	<property name="srcPackage" 		value="com/epam/helloworldforant"/>
+	<property name="excludeClass" 		value="**/runner/SimpleRunner.java"/>
+	<property name="jarName" 			value="RunnerSPI.jar"/>
+	<property name="resources" 			value="src/main/resources"/>
+	<property name="environment" 		value="default"/>
+	<property name="propertyFile" 		value="src/main/resources/properties/message_${environment}.properties"/>
+	<property name="propertyFileDest" 	value="${build}/properties/message.properties"/>
+	<property name="mainClass" 			value="com.epam.helloworldforant.runner.Runner"/>
+	<property name="inputArg" 			value="Aset"/>
+	
+	<target name="compile">
+        <mkdir dir="${build}"/>
+        <javac destdir="${build}" includeantruntime="false">
+            <src path="${srcRoot}/${srcPackage}"/>
+			<exclude name="${excludeClass}"/>
+        </javac>
+		<copy todir="${build}">
+			<fileset dir="${resources}">
+				<exclude name="**/properties/*.properties"/>
+			</fileset>
+		</copy>
+		<copy file="${propertyFile}" tofile="${propertyFileDest}" overwrite="true"/>
+    </target>
+	
+	<target name="package">
+		<jar destfile="${build}/${jarName}" basedir="${build}">
+			<manifest>
+				<attribute name="Main-Class" value="${mainClass}"/>
+			</manifest>
+		</jar>
+	</target>
+	
+    <target name="run">
+        <java jar="${build}/${jarName}" fork="true">
+			<arg value="${inputArg}"/>
+		</java>
+    </target>
+	-->
+
+
+	<!--
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac destdir="build/classes" includeantruntime="false">
+            <src path="src/main/java/com/epam/helloworldforant"/>
+			<exclude name="**/runner/SimpleRunner.java"/>
+        </javac>
+    </target>
+	<target name="package">
+		<jar destfile="build/RunnerSPI.jar" basedir="build/classes">
+			<fileset dir="src/main/resources"/>
+			<manifest>
+				<attribute name="Main-Class" value="com.epam.helloworldforant.runner.Runner"/>
+			</manifest>
+		</jar>
+	</target>
+    <target name="run">
+        <java jar="build/RunnerSPI.jar" fork="true">
+			<arg value="Aset"/>
+		</java>
+    </target>
+	-->
+</project>

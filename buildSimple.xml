@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project name="HelloWorld" default="run">
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac destdir="build/classes" includeantruntime="false">
+            <src path="src/main/java/com/epam/helloworldforant/runner"/>
+			<exclude name="**/Runner.java"/>
+        </javac>
+    </target>
+	<target name="package">
+		<jar destfile="build/Runner.jar" basedir="build/classes">
+			<manifest>
+				<attribute name="Main-Class" value="com.epam.helloworldforant.runner.SimpleRunner"/>
+			</manifest>
+		</jar>
+	</target>
+    <target name="run">
+        <java jar="build/Runner.jar" fork="true"/>
+    </target>
+</project>

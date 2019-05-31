@@ -1,0 +1,15 @@
+<ivysettings>
+	<settings defaultResolver="myResolver"/>
+
+	<credentials host="epkzkarw0579" realm="Sonatype Nexus Repository Manager" username="admin" passwd="admin123"/>
+
+	<property name="mirror" 	value="http://epkzkarw0579:8081/repository/mdp-sandbox-mirror/"/>
+	<property name="sandbox" 	value="http://epkzkarw0579:8081/repository/mdp-sandbox-release/"/>
+
+	<resolvers>
+		<ibiblio name="myResolver" 				m2compatible="true" root="${mirror}"/>
+		<ibiblio name="myResolverForPublishing" m2compatible="true" root="${sandbox}" pattern="[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"/>
+	</resolvers>
+
+
+</ivysettings>
